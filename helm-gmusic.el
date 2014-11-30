@@ -21,35 +21,25 @@
 (require 'helm)
 (require 'url)
 
-(defun gmusic-setup ()
-  "Setup Google Music Player"
-  (interactive)
-  (setq gmusicproxy_port 8000)
-  (setq vlc_port 9000)
-
-  (async-shell-command (format "cvlc --intf rc --rc-host localhost:%d &" vlc_port) "*CVLCMusicPlayer*")
-  (async-shell-command (format "GMusicProxy -P %d &" gmusicproxy_port) "*GMusicProxy*"))
-
-
 (defun gmusic-vlc-command (command)
   "Send COMMAND to vlc music player."
   (shell-command (format "/bin/echo %s | netcat localhost %d" command vlc_port)))
 
 (defun gmusic-pause ()
   "Pause VLC player."
-  (gmusic_vlc_command "pause"))
+  (gmusic-vlc-command "pause"))
 
 (defun gmusic-play ()
   "Play VLC player."
-  (gmusic_vlc_command "play"))
+  (gmusic-vlc-command "play"))
 
 (defun gmusic-next ()
   "Next song in queue VLC player."
-  (gmusic_vlc_command "next"))
+  (gmusic-vlc-command "next"))
 
 (defun gmusic-stop ()
   "Stop VLC player."
-  (gmusic_vlc_command "stop"))
+  (gmusic-vlc-command "stop"))
 
 (defun gmusic-format-track (track)
   "Given a TRACK, return a a formatted string suitable for display."
@@ -108,6 +98,15 @@
   (interactive)
   (helm :sources 'helm-source-gmusic-artist-search
 	:buffer "*helm-gmusic*"))
+
+(defun gmusic-setup ()
+  "Setup Google Music Player."
+  (interactive)
+  (setq gmusicproxy_port 8000)
+  (setq vlc_port 9000)
+
+  (async-shell-command (format "cvlc --intf rc --rc-host localhost:%d &" vlc_port) "*CVLCMusicPlayer*")
+  (async-shell-command (format "GMusicProxy -P %d &" gmusicproxy_port) "*GMusicProxy*"))
 
 (provide 'helm-gmusic)
 (provide 'gmusic-setup)
